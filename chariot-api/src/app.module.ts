@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HealthModule } from './health';
-import { UsersModule } from './users/users.module';
+import { PaymentsModule } from './payments/payments.module';
 import { AppConfigService } from './config/config.service';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,7 +19,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
       useClass: TypeOrmConfigService,
     }),
     HealthModule,
-    UsersModule,
+    PaymentsModule,
   ],
   providers: [ConfigService, AppConfigService],
   exports: [ConfigService, AppConfigService],

@@ -162,7 +162,7 @@ chariot-api/dist/
 chariot-api/.env
 chariot-api/uploads/
 
-# Client specific  
+# Client specific
 chariot-client/dist/
 chariot-client/.env.local
 chariot-client/.env.development.local

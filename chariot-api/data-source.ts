@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import configuration from './src/config/configuration';
-import { User } from './src/users/users.entity';
+import { Payment } from './src/payments/payments.entity';
 
 const config = configuration();
 
@@ -11,7 +11,7 @@ export default new DataSource({
   username: config.database.username,
   password: config.database.password,
   database: config.database.name,
-  entities: [User],
+  entities: [Payment],
   migrations: ['src/migrations/*.ts'],
   synchronize: false,
 });
