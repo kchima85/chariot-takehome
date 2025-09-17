@@ -1,10 +1,7 @@
 // Global TypeScript type definitions
 
-export interface User {
-  id: string
-  name: string
-  email: string
-}
+// Re-export API types for global access
+export type { PaymentResponseDto, GetPaymentsQuery } from '../api/client'
 
 export interface ApiResponse<T> {
   data: T
