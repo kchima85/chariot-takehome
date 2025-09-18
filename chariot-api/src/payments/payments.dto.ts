@@ -1,5 +1,13 @@
-import { IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsInt,
+  Min,
+  Max,
+} from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { Payment } from './payments.entity';
 
 export class GetPaymentsQueryDto {
@@ -26,6 +34,32 @@ export class GetPaymentsQueryDto {
   @IsOptional()
   @IsDateString()
   scheduledDateTo?: string;
+
+  @ApiPropertyOptional({
+    description: 'Number of items to return',
+    example: 10,
+    default: 10,
+    minimum: 1,
+    maximum: 100,
+  })
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit?: number = 10;
+
+  @ApiPropertyOptional({
+    description: 'Number of items to skip',
+    example: 0,
+    default: 0,
+    minimum: 0,
+  })
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @IsInt()
+  @Min(0)
+  offset?: number = 0;
 }
 
 export class PaymentResponseDto {

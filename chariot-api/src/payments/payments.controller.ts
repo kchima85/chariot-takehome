@@ -8,6 +8,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { GetPaymentsQueryDto, PaymentResponseDto } from './payments.dto';
+import { PaginatedResponse } from '../shared/pagination.dto';
 
 @ApiTags('payments')
 @Controller('payments')
@@ -15,16 +16,24 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all payments with optional filtering' })
+  @ApiOperation({
+    summary: 'Get all payments with optional filtering and pagination',
+  })
   @ApiResponse({
     status: 200,
-    description: 'List of payments',
-    type: [PaymentResponseDto],
+    description: 'Paginated list of payments',
+    type: PaginatedResponse<PaymentResponseDto>,
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async getPayments(
     @Query() queryDto: GetPaymentsQueryDto,
-  ): Promise<PaymentResponseDto[]> {
-    return this.paymentsService.getAllPayments(queryDto);
+  ): Promise<PaginatedResponse<PaymentResponseDto>> {
+    const { data, total, limit, offset } =
+      await this.paymentsService.getAllPayments(queryDto);
+
+    // Map to DTOs in controller
+    const paymentDtos = data.map((payment) => new PaymentResponseDto(payment));
+
+    return new PaginatedResponse(paymentDtos, total, limit, offset);
   }
 }

@@ -11,7 +11,12 @@ export class PaymentsRepository {
     private readonly paymentsRepository: Repository<Payment>,
   ) {}
 
-  async findAll(queryDto: GetPaymentsQueryDto): Promise<Payment[]> {
+  async findAll(queryDto: GetPaymentsQueryDto): Promise<{
+    data: Payment[];
+    total: number;
+    limit: number;
+    offset: number;
+  }> {
     const query = this.paymentsRepository.createQueryBuilder('payment');
 
     // Filter by recipient if provided
@@ -37,6 +42,16 @@ export class PaymentsRepository {
     // Order by scheduled date (most recent first)
     query.orderBy('payment.scheduledDate', 'DESC');
 
-    return query.getMany();
+    // Apply pagination
+    const limit = queryDto.limit || 10;
+    const offset = queryDto.offset || 0;
+
+    query.limit(limit);
+    query.offset(offset);
+
+    // Get both data and total count
+    const [data, total] = await query.getManyAndCount();
+
+    return { data, total, limit, offset };
   }
 }

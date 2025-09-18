@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentsRepository } from './payments.repo';
-import { GetPaymentsQueryDto, PaymentResponseDto } from './payments.dto';
+import { GetPaymentsQueryDto } from './payments.dto';
+import { Payment } from './payments.entity';
 
 @Injectable()
 export class PaymentsService {
   constructor(private readonly paymentsRepository: PaymentsRepository) {}
 
-  async getAllPayments(
-    queryDto: GetPaymentsQueryDto,
-  ): Promise<PaymentResponseDto[]> {
-    const payments = await this.paymentsRepository.findAll(queryDto);
-    return payments.map((payment) => new PaymentResponseDto(payment));
+  async getAllPayments(queryDto: GetPaymentsQueryDto): Promise<{
+    data: Payment[];
+    total: number;
+    limit: number;
+    offset: number;
+  }> {
+    const result = await this.paymentsRepository.findAll(queryDto);
+    return result;
   }
 }
