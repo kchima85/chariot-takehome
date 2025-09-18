@@ -1,41 +1,40 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { describe, it, expect } from 'vitest'
 import HomePage from '../pages/HomePage'
+import { renderWithQueryClient } from './utils/mockUtils'
 
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>)
+const renderWithRouterAndQuery = (component: React.ReactElement) => {
+  return renderWithQueryClient(<BrowserRouter>{component}</BrowserRouter>)
 }
 
 describe('HomePage', () => {
-  it('renders welcome message', () => {
-    renderWithRouter(<HomePage />)
+  it('renders main heading', () => {
+    renderWithRouterAndQuery(<HomePage />)
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-    expect(screen.getByText('Welcome to React Boilerplate')).toBeInTheDocument()
+    expect(screen.getByText('Payment Management')).toBeInTheDocument()
   })
 
-  it('renders verification component link', () => {
-    renderWithRouter(<HomePage />)
+  it('renders description', () => {
+    renderWithRouterAndQuery(<HomePage />)
     expect(
-      screen.getByRole('link', { name: /view theme & component verification/i })
-    ).toBeInTheDocument()
-  })
-
-  it('displays feature list', () => {
-    renderWithRouter(<HomePage />)
-    expect(
-      screen.getByRole('heading', { name: 'TypeScript' })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Tailwind CSS v4' })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'shadcn/ui' })
+      screen.getByText(/view and manage payments with real-time data/i)
     ).toBeInTheDocument()
   })
 
-  it('contains description text', () => {
-    renderWithRouter(<HomePage />)
-    expect(screen.getByText(/modern React boilerplate/i)).toBeInTheDocument()
+  it('renders PaymentsList component', () => {
+    renderWithRouterAndQuery(<HomePage />)
+    expect(screen.getByText('Payments')).toBeInTheDocument()
+    expect(screen.getByText('Loading payments...')).toBeInTheDocument()
+  })
+
+  it('renders page structure correctly', () => {
+    renderWithRouterAndQuery(<HomePage />)
+    expect(
+      screen.getByRole('heading', { name: 'Payment Management' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Payments' })
+    ).toBeInTheDocument()
   })
 })

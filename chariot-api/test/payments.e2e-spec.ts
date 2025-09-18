@@ -86,14 +86,16 @@ describe('Payments E2E', () => {
         .get('/payments')
         .expect(200)
         .expect((res) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body.length).toBe(4);
-          expect(res.body[0]).toHaveProperty('id');
-          expect(res.body[0]).toHaveProperty('amount');
-          expect(res.body[0]).toHaveProperty('currency');
-          expect(res.body[0]).toHaveProperty('scheduledDate');
-          expect(res.body[0]).toHaveProperty('recipient');
-          expect(res.body[0]).toHaveProperty('status');
+          expect(res.body).toHaveProperty('data');
+          expect(Array.isArray(res.body.data)).toBe(true);
+          expect(res.body.data.length).toBe(4);
+          expect(res.body.total).toBe(4);
+          expect(res.body.data[0]).toHaveProperty('id');
+          expect(res.body.data[0]).toHaveProperty('amount');
+          expect(res.body.data[0]).toHaveProperty('currency');
+          expect(res.body.data[0]).toHaveProperty('scheduledDate');
+          expect(res.body.data[0]).toHaveProperty('recipient');
+          expect(res.body.data[0]).toHaveProperty('status');
         });
     });
 
@@ -102,10 +104,11 @@ describe('Payments E2E', () => {
         .get('/payments?recipient=john')
         .expect(200)
         .expect((res) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body.length).toBe(2);
+          expect(res.body).toHaveProperty('data');
+          expect(Array.isArray(res.body.data)).toBe(true);
+          expect(res.body.data.length).toBe(2);
           expect(
-            res.body.every((payment) =>
+            res.body.data.every((payment) =>
               payment.recipient.toLowerCase().includes('john'),
             ),
           ).toBe(true);
@@ -119,10 +122,11 @@ describe('Payments E2E', () => {
         )
         .expect(200)
         .expect((res) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body.length).toBe(3);
+          expect(res.body).toHaveProperty('data');
+          expect(Array.isArray(res.body.data)).toBe(true);
+          expect(res.body.data.length).toBe(3);
           expect(
-            res.body.every((payment) => {
+            res.body.data.every((payment) => {
               const date = new Date(payment.scheduledDate);
               return (
                 date >= new Date('2025-01-01') && date <= new Date('2025-12-31')
@@ -137,10 +141,11 @@ describe('Payments E2E', () => {
         .get('/payments?recipient=john&scheduledDateFrom=2025-01-01')
         .expect(200)
         .expect((res) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body.length).toBe(2);
+          expect(res.body).toHaveProperty('data');
+          expect(Array.isArray(res.body.data)).toBe(true);
+          expect(res.body.data.length).toBe(2);
           expect(
-            res.body.every(
+            res.body.data.every(
               (payment) =>
                 payment.recipient.toLowerCase().includes('john') &&
                 new Date(payment.scheduledDate) >= new Date('2025-01-01'),
@@ -154,8 +159,9 @@ describe('Payments E2E', () => {
         .get('/payments?recipient=nonexistent')
         .expect(200)
         .expect((res) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body.length).toBe(0);
+          expect(res.body).toHaveProperty('data');
+          expect(Array.isArray(res.body.data)).toBe(true);
+          expect(res.body.data.length).toBe(0);
         });
     });
 
@@ -171,7 +177,13 @@ describe('Payments E2E', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .expect((res) => {
-          const payment = res.body[0];
+          expect(res.body).toHaveProperty('data');
+          expect(res.body).toHaveProperty('total');
+          expect(res.body).toHaveProperty('limit');
+          expect(res.body).toHaveProperty('offset');
+          expect(res.body).toHaveProperty('count');
+
+          const payment = res.body.data[0];
           expect(typeof payment.id).toBe('string');
           expect(typeof payment.amount).toBe('string');
           expect(payment.currency).toBe('USD');
