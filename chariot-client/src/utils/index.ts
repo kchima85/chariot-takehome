@@ -30,10 +30,6 @@ export const debounce = <T extends (...args: unknown[]) => unknown>(
   }
 }
 
-export const sleep = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 export const randomId = (): string => {
   return Math.random().toString(36).substring(2, 15)
 }
