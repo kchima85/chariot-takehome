@@ -1,0 +1,16 @@
+.gitignore
+.npmignore
+.openapi-generator-ignore
+api.ts
+api/default-api.ts
+api/payments-api.ts
+base.ts
+common.ts
+configuration.ts
+docs/DefaultApi.md
+docs/PaginatedResponse.md
+docs/PaymentsApi.md
+git_push.sh
+index.ts
+models/index.ts
+models/paginated-response.ts
