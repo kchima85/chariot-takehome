@@ -1,29 +1,33 @@
 import { useQuery } from '@tanstack/react-query'
-import { paymentsApi } from '../api/client'
-import type { GetPaymentsQuery, PaymentResponseDto } from '../api/client'
+import { fetchPayments, fetchRecipients } from '../api/payments.api'
+import type {
+  PaymentsTableFilters,
+  PaginatedPaymentsResponse,
+} from '../types/payments.types'
 
-// Query keys for cache management
-export const paymentKeys = {
-  all: ['payments'] as const,
-  lists: () => [...paymentKeys.all, 'list'] as const,
-  list: (filters: GetPaymentsQuery) =>
-    [...paymentKeys.lists(), { filters }] as const,
+export const usePayments = (
+  filters: PaymentsTableFilters,
+  limit = 10,
+  offset = 0
+) => {
+  return useQuery({
+    queryKey: ['payments', filters, limit, offset],
+    queryFn: async (): Promise<PaginatedPaymentsResponse> => {
+      return fetchPayments(
+        filters.recipients.length > 0
+          ? filters.recipients.join(',')
+          : undefined,
+        filters.scheduledDate || undefined,
+        limit,
+        offset
+      )
+    },
+  })
 }
 
-/**
- * Hook to fetch payments with optional filtering
- */
-export function usePayments(query: GetPaymentsQuery = {}) {
+export const useRecipients = () => {
   return useQuery({
-    queryKey: paymentKeys.list(query),
-    queryFn: async (): Promise<PaymentResponseDto[]> => {
-      const { data } = await paymentsApi.paymentsControllerGetPayments(
-        query.recipient,
-        query.scheduledDateFrom,
-        query.scheduledDateTo
-      )
-      return data
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: ['recipients'],
+    queryFn: fetchRecipients,
   })
 }
