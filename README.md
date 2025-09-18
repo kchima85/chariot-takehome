@@ -358,12 +358,12 @@ This project includes a comprehensive test suite with **127 total tests** across
 
 ### Test Coverage Summary
 
-| Test Type | Command | Tests | Status |
-|-----------|---------|-------|--------|
-| **Frontend Tests** | `make test-client` | 111 tests | ✅ React components, hooks, utilities |
-| **Backend Unit Tests** | `make test-api` | 9 tests | ✅ Services, controllers, business logic |
-| **End-to-End Tests** | `make test-e2e` | 7 tests | ✅ Full API integration with database |
-| **All Unit Tests** | `make test-all` | 120 tests | ✅ Frontend + Backend combined |
+| Test Type              | Command            | Tests     | Status                                   |
+| ---------------------- | ------------------ | --------- | ---------------------------------------- |
+| **Frontend Tests**     | `make test-client` | 111 tests | ✅ React components, hooks, utilities    |
+| **Backend Unit Tests** | `make test-api`    | 9 tests   | ✅ Services, controllers, business logic |
+| **End-to-End Tests**   | `make test-e2e`    | 7 tests   | ✅ Full API integration with database    |
+| **All Unit Tests**     | `make test-all`    | 120 tests | ✅ Frontend + Backend combined           |
 
 ### Quick Testing Commands
 
@@ -392,7 +392,7 @@ The `make test-e2e` command automatically:
 
 1. **🐳 Starts Docker containers** (API + PostgreSQL)
 2. **⏳ Waits for services** to be ready
-3. **🗄️ Runs database migrations** 
+3. **🗄️ Runs database migrations**
 4. **🧪 Executes integration tests** against live API
 5. **📊 Validates API responses** and database state
 
