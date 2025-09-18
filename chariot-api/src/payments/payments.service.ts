@@ -7,6 +7,10 @@ import { Payment } from './payments.entity';
 export class PaymentsService {
   constructor(private readonly paymentsRepository: PaymentsRepository) {}
 
+  async getUniqueRecipients(): Promise<string[]> {
+    return this.paymentsRepository.findUniqueRecipients();
+  }
+
   async getAllPayments(queryDto: GetPaymentsQueryDto): Promise<{
     data: Payment[];
     total: number;

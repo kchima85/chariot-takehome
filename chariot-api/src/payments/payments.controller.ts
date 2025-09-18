@@ -15,6 +15,17 @@ import { PaginatedResponse } from '../shared/pagination.dto';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @Get('recipients')
+  @ApiOperation({ summary: 'Get unique payment recipients' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of unique recipients',
+    type: [String],
+  })
+  async getUniqueRecipients(): Promise<string[]> {
+    return this.paymentsService.getUniqueRecipients();
+  }
+
   @Get()
   @ApiOperation({
     summary: 'Get all payments with optional filtering and pagination',

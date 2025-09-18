@@ -11,6 +11,16 @@ export class PaymentsRepository {
     private readonly paymentsRepository: Repository<Payment>,
   ) {}
 
+  async findUniqueRecipients(): Promise<string[]> {
+    const result = await this.paymentsRepository
+      .createQueryBuilder('payment')
+      .select('DISTINCT payment.recipient', 'recipient')
+      .orderBy('payment.recipient', 'ASC')
+      .getRawMany();
+
+    return result.map((row) => row.recipient);
+  }
+
   async findAll(queryDto: GetPaymentsQueryDto): Promise<{
     data: Payment[];
     total: number;
@@ -19,11 +29,27 @@ export class PaymentsRepository {
   }> {
     const query = this.paymentsRepository.createQueryBuilder('payment');
 
-    // Filter by recipient if provided
+    // Filter by recipient if provided (supports comma-separated values)
     if (queryDto.recipient) {
-      query.andWhere('payment.recipient ILIKE :recipient', {
-        recipient: `%${queryDto.recipient}%`,
-      });
+      const recipients = queryDto.recipient
+        .split(',')
+        .map((r) => r.trim())
+        .filter((r) => r);
+      if (recipients.length > 0) {
+        if (recipients.length === 1) {
+          query.andWhere('payment.recipient ILIKE :recipient', {
+            recipient: `%${recipients[0]}%`,
+          });
+        } else {
+          const conditions = recipients.map(
+            (_, index) => `payment.recipient ILIKE :recipient${index}`,
+          );
+          query.andWhere(`(${conditions.join(' OR ')})`);
+          recipients.forEach((recipient, index) => {
+            query.setParameter(`recipient${index}`, `%${recipient}%`);
+          });
+        }
+      }
     }
 
     // Filter by date range if provided
