@@ -233,11 +233,11 @@ The client will be available at:
 
 ### API Endpoints
 
-| Method | Endpoint      | Description               |
-| ------ | ------------- | ------------------------- |
-| GET    | `/health`     | Health check              |
-| GET    | `/payments`   | Get paginated payments    |
-| GET    | `/recipients` | Get all unique recipients |
+| Method | Endpoint               | Description               |
+| ------ | ---------------------- | ------------------------- |
+| GET    | `/health`              | Health check              |
+| GET    | `/payments`            | Get paginated payments    |
+| GET    | `/payments/recipients` | Get all unique recipients |
 
 ### Database Schema
 
