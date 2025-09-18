@@ -1,7 +1,7 @@
 # Chariot Takehome - Root Makefile
 # Manages both API and Client applications
 
-.PHONY: help install dev build test lint clean docker-up docker-down docker-logs
+.PHONY: help install dev build test lint clean docker-up docker-up-db docker-down docker-logs
 
 # Default target
 help:
@@ -40,6 +40,7 @@ help:
 	@echo ""
 	@echo "Docker (API):"
 	@echo "  docker-up     Start API and PostgreSQL with Docker"
+	@echo "  docker-up-db  Start PostgreSQL database only"
 	@echo "  docker-down   Stop Docker containers"
 	@echo "  docker-logs   View Docker logs"
 	@echo ""
@@ -144,6 +145,13 @@ test-client:
 
 test-e2e:
 	@echo "🧪 Running API e2e tests..."
+	@echo "🐳 Starting full application stack (API + PostgreSQL)..."
+	@cd chariot-api && docker-compose up -d
+	@echo "⏳ Waiting for services to be ready..."
+	@sleep 10
+	@echo "🗄️ Running database migrations..."
+	@cd chariot-api && docker-compose exec -T api npm run migration:run
+	@echo "🧪 Running e2e tests..."
 	cd chariot-api && npm run test:e2e
 
 test-all: test-api test-client
@@ -165,6 +173,10 @@ lint-all: lint-api lint-client
 docker-up:
 	@echo "🐳 Starting Docker containers..."
 	cd chariot-api && docker-compose up --build
+
+docker-up-db:
+	@echo "🐳 Starting PostgreSQL database only..."
+	cd chariot-api && docker-compose up -d postgres
 
 docker-down:
 	@echo "🐳 Stopping Docker containers..."
