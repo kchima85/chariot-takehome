@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
-import { GetPaymentsQueryDto, PaymentResponseDto } from './payments.dto';
+import { GetPaymentsQueryDto } from './payments.dto';
+import { Payment } from './payments.entity';
 import { mock, MockProxy } from 'jest-mock-extended';
 
 describe('PaymentsController', () => {
   let controller: PaymentsController;
   let service: MockProxy<PaymentsService>;
 
-  const mockPaymentResponse: PaymentResponseDto = {
+  const mockPayment: Payment = {
     id: 'test-uuid',
     amount: 2500,
     currency: 'USD',
@@ -17,6 +18,7 @@ describe('PaymentsController', () => {
     status: 'pending',
     createdAt: new Date('2025-09-17T05:04:13.397Z'),
     updatedAt: new Date('2025-09-17T05:04:13.397Z'),
+    deletedAt: null,
   };
 
   beforeEach(async () => {
@@ -41,42 +43,63 @@ describe('PaymentsController', () => {
 
   describe('getPayments', () => {
     it('should return all payments when no filters provided', async () => {
-      const mockPayments = [mockPaymentResponse];
+      const mockServiceResponse = {
+        data: [mockPayment], // Service returns raw Payment entities
+        total: 1,
+        limit: 10,
+        offset: 0,
+      };
       const queryDto: GetPaymentsQueryDto = {};
 
-      service.getAllPayments.mockResolvedValue(mockPayments);
+      service.getAllPayments.mockResolvedValue(mockServiceResponse);
 
       const result = await controller.getPayments(queryDto);
 
       expect(service.getAllPayments).toHaveBeenCalledWith(queryDto);
-      expect(result).toEqual(mockPayments);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
+      expect(result.count).toBe(1);
     });
 
     it('should pass recipient filter to service', async () => {
-      const mockPayments = [mockPaymentResponse];
+      const mockServiceResponse = {
+        data: [mockPayment],
+        total: 1,
+        limit: 10,
+        offset: 0,
+      };
       const queryDto: GetPaymentsQueryDto = { recipient: 'john' };
 
-      service.getAllPayments.mockResolvedValue(mockPayments);
+      service.getAllPayments.mockResolvedValue(mockServiceResponse);
 
       const result = await controller.getPayments(queryDto);
 
       expect(service.getAllPayments).toHaveBeenCalledWith(queryDto);
-      expect(result).toEqual(mockPayments);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
     });
 
     it('should pass date range filters to service', async () => {
-      const mockPayments = [mockPaymentResponse];
+      const mockServiceResponse = {
+        data: [mockPayment],
+        total: 1,
+        limit: 10,
+        offset: 0,
+      };
       const queryDto: GetPaymentsQueryDto = {
         scheduledDateFrom: '2025-01-01',
         scheduledDateTo: '2025-12-31',
       };
 
-      service.getAllPayments.mockResolvedValue(mockPayments);
+      service.getAllPayments.mockResolvedValue(mockServiceResponse);
 
       const result = await controller.getPayments(queryDto);
 
       expect(service.getAllPayments).toHaveBeenCalledWith(queryDto);
-      expect(result).toEqual(mockPayments);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
     });
 
     it('should handle service errors gracefully', async () => {

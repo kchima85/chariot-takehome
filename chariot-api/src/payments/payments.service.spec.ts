@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentsService } from './payments.service';
 import { PaymentsRepository } from './payments.repo';
-import { GetPaymentsQueryDto, PaymentResponseDto } from './payments.dto';
+import { GetPaymentsQueryDto } from './payments.dto';
 import { Payment } from './payments.entity';
 import { mock, MockProxy } from 'jest-mock-extended';
 
@@ -41,29 +41,43 @@ describe('PaymentsService', () => {
   });
 
   describe('getAllPayments', () => {
-    it('should return transformed payment data', async () => {
+    it('should return transformed payment data with pagination metadata', async () => {
       const mockPayments = [mockPayment];
+      const mockRepositoryResult = {
+        data: mockPayments,
+        total: 1,
+        limit: 10,
+        offset: 0,
+      };
       const queryDto: GetPaymentsQueryDto = {};
 
-      repository.findAll.mockResolvedValue(mockPayments);
+      repository.findAll.mockResolvedValue(mockRepositoryResult);
 
       const result = await service.getAllPayments(queryDto);
 
       expect(repository.findAll).toHaveBeenCalledWith(queryDto);
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBeInstanceOf(PaymentResponseDto);
-      expect(result[0].id).toBe(mockPayment.id);
-      expect(result[0].amount).toBe(mockPayment.amount);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBe(mockPayment.id);
+      expect(result.data[0].amount).toBe(mockPayment.amount);
+      expect(result.total).toBe(1);
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
     });
 
     it('should pass filters to repository', async () => {
       const mockPayments = [mockPayment];
+      const mockRepositoryResult = {
+        data: mockPayments,
+        total: 1,
+        limit: 10,
+        offset: 0,
+      };
       const queryDto: GetPaymentsQueryDto = {
         recipient: 'john',
         scheduledDateFrom: '2025-01-01',
       };
 
-      repository.findAll.mockResolvedValue(mockPayments);
+      repository.findAll.mockResolvedValue(mockRepositoryResult);
 
       await service.getAllPayments(queryDto);
 
@@ -72,13 +86,17 @@ describe('PaymentsService', () => {
 
     it('should handle empty results from repository', async () => {
       const queryDto: GetPaymentsQueryDto = {};
+      const mockEmptyResult = { data: [], total: 0, limit: 10, offset: 0 };
 
-      repository.findAll.mockResolvedValue([]);
+      repository.findAll.mockResolvedValue(mockEmptyResult);
 
       const result = await service.getAllPayments(queryDto);
 
       expect(repository.findAll).toHaveBeenCalledWith(queryDto);
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
     });
   });
 });
