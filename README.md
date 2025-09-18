@@ -233,30 +233,23 @@ The client will be available at:
 
 ### API Endpoints
 
-| Method | Endpoint     | Description      |
-| ------ | ------------ | ---------------- |
-| GET    | `/health`    | Health check     |
-| POST   | `/users`     | Create user      |
-| GET    | `/users`     | Get all users    |
-| GET    | `/users/:id` | Get user by ID   |
-| PUT    | `/users/:id` | Update user      |
-| DELETE | `/users/:id` | Soft delete user |
+| Method | Endpoint      | Description               |
+| ------ | ------------- | ------------------------- |
+| GET    | `/health`     | Health check              |
+| GET    | `/payments`   | Get paginated payments    |
+| GET    | `/recipients` | Get all unique recipients |
 
 ### Database Schema
 
-**Users Table**:
+**Payments Table**:
 
 -   `id` (UUID, Primary Key)
--   `username` (String, Required)
--   `email` (String, Required, Unique)
--   `password` (String, Required)
--   `firstName` (String, Optional)
--   `lastName` (String, Optional)
--   `bio` (Text, Optional)
--   `avatar` (String, Optional)
--   `isVerified` (Boolean, Default: false)
--   `isActive` (Boolean, Default: true)
--   `createdAt`, `updatedAt`, `deletedAt` (Timestamps)
+-   `recipient` (String, Required)
+-   `amount` (Decimal, Required)
+-   `currency` (String, Required, Default: 'USD')
+-   `status` (String, Required)
+-   `scheduledDate` (Date, Required)
+-   `createdAt`, `updatedAt` (Timestamps)
 
 ### Development Commands
 
