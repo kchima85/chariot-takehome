@@ -7,6 +7,12 @@
 help:
 	@echo "Chariot Takehome - Available commands:"
 	@echo ""
+	@echo "Quick Start:"
+	@echo "  setup         Complete project setup (Docker + migrations + seed + frontend)"
+	@echo "  status        Check if services are running"
+	@echo "  stop          Stop all services (Docker + frontend)"
+	@echo "  restart-setup Complete restart (stop + setup)"
+	@echo ""
 	@echo "Setup & Installation:"
 	@echo "  install       Install dependencies for both API and client"
 	@echo "  clean         Clean node_modules and build artifacts"
@@ -50,6 +56,51 @@ install:
 	@echo "📦 Installing dependencies for client..."
 	cd chariot-client && npm install
 	@echo "✅ All dependencies installed!"
+
+# Complete Project Setup
+setup: install
+	@echo "🚀 Starting complete project setup..."
+	@echo ""
+	@echo "Step 1/4: Starting Docker containers (API + PostgreSQL)..."
+	cd chariot-api && docker-compose up --build -d
+	@echo "⏳ Waiting for containers to be ready..."
+	@sleep 15
+	@echo ""
+	@echo "Step 2/4: Running database migrations..."
+	@cd chariot-api && docker-compose exec -T api npm run migration:run
+	@echo ""
+	@echo "Step 3/4: Seeding database with sample data..."
+	@cd chariot-api && docker-compose exec -T api npm run seed:run
+	@echo ""
+	@echo "Step 4/4: Starting frontend development server..."
+	@echo "🎉 Setup complete! Frontend will start in a new terminal window..."
+	@echo "📍 API running at: http://localhost:3000"
+	@echo "📍 Frontend running at: http://localhost:5173"
+	@echo ""
+	@echo "Opening frontend..."
+	cd chariot-client && npm run dev
+
+# Project Status & Control
+status:
+	@echo "📊 Checking project status..."
+	@echo ""
+	@echo "Docker containers:"
+	@cd chariot-api && docker-compose ps 2>/dev/null || echo "No containers running"
+	@echo ""
+	@echo "Ports in use:"
+	@lsof -ti:3000 >/dev/null 2>&1 && echo "✅ Port 3000 (API): In use" || echo "❌ Port 3000 (API): Available"
+	@lsof -ti:5173 >/dev/null 2>&1 && echo "✅ Port 5173 (Frontend): In use" || echo "❌ Port 5173 (Frontend): Available"
+
+stop:
+	@echo "🛑 Stopping all services..."
+	@echo "Stopping Docker containers..."
+	@cd chariot-api && docker-compose down 2>/dev/null || echo "No containers to stop"
+	@echo "Stopping any processes on port 5173..."
+	@lsof -ti:5173 | xargs kill -9 2>/dev/null || echo "No frontend processes to stop"
+	@echo "✅ All services stopped!"
+
+restart-setup: stop setup
+	@echo "🔄 Complete restart finished!"
 
 clean:
 	@echo "🧹 Cleaning build artifacts and node_modules..."

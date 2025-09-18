@@ -1,5 +1,5 @@
 {
-  "name": "twitter-clone-backend",
+  "name": "chariot-takehome-backend",
   "version": "1.0.0",
   "description": "NestJS + TypeScript backend with Docker and PostgreSQL",
   "author": "",

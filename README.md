@@ -1,6 +1,56 @@
 # Chariot Takehome
 
-A full-stack web application built with NestJS backend and React frontend, showcasing modern web development practices and user management capabilities.
+A full-stack payments management application built with NestJS backend and React frontend, showcasing modern web development practices with sophisticated UI components and database management.
+
+## 🚀 One-Command Setup
+
+To set up the entire project from scratch, simply run:
+
+```bash
+make setup
+```
+
+This single command will:
+
+1. **📦 Install dependencies** for both API and client
+2. **🐳 Start Docker containers** (API + PostgreSQL database)
+3. **🗄️ Run database migrations** to create the required tables
+4. **🌱 Seed the database** with sample payment data
+5. **⚡ Start the frontend** development server
+
+## 📍 Access URLs
+
+After setup completes:
+
+-   **API**: http://localhost:3000
+-   **Frontend**: http://localhost:5173
+-   **API Docs**: http://localhost:3000/api (Swagger/OpenAPI)
+
+## 🛠️ Additional Commands
+
+### Check Status
+
+```bash
+make status
+```
+
+Shows whether Docker containers and development servers are running.
+
+### Stop All Services
+
+```bash
+make stop
+```
+
+Stops Docker containers and any running frontend processes.
+
+### Complete Restart
+
+```bash
+make restart-setup
+```
+
+Stops everything and runs the complete setup again.
 
 ## 🏗️ Project Structure
 
@@ -9,7 +59,30 @@ This monorepo contains two main applications:
 ```
 chariot-takehome/
 ├── chariot-api/          # NestJS backend API
-└── chariot-client/       # React frontend client
+├── chariot-client/       # React frontend client
+├── Makefile             # Root commands
+└── README.md            # This file
+```
+
+## 🧩 Manual Setup (Advanced)
+
+If you prefer to run steps individually:
+
+```bash
+# 1. Install dependencies
+make install
+
+# 2. Start Docker (API + PostgreSQL)
+make docker-up
+
+# 3. Run migrations
+make db-migrate
+
+# 4. Seed database
+make db-seed
+
+# 5. Start frontend
+make dev-client
 ```
 
 ## 🚀 Quick Start
@@ -20,7 +93,54 @@ chariot-takehome/
 -   Docker & Docker Compose
 -   Git
 
-### Backend Setup (chariot-api)
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+If you see port conflicts:
+
+```bash
+make stop
+make setup
+```
+
+### Database Connection Issues
+
+```bash
+# Stop and restart Docker containers
+make docker-down
+make docker-up
+# Wait a moment for PostgreSQL to start
+make db-migrate
+```
+
+### Fresh Start
+
+```bash
+make clean
+make setup
+```
+
+## 🎨 Features
+
+### Frontend (React + TypeScript)
+
+-   **Modern UI Components**: Domain-specific abstractions over shadcn/ui
+-   **Payment Management**: Filter, sort, and paginate payments
+-   **Real-time Highlighting**: Upcoming payments (24hr) are highlighted
+-   **Smart Totals**: Dynamic calculation of filtered payment amounts
+-   **Responsive Design**: Mobile-friendly interface
+-   **Type Safety**: Full TypeScript coverage
+
+### Backend (NestJS + PostgreSQL)
+
+-   **RESTful API**: Clean, documented endpoints
+-   **Database Migrations**: TypeORM with automated migrations
+-   **Data Seeding**: Sample payment data for development
+-   **Swagger Documentation**: Auto-generated API docs
+-   **Docker Development**: Complete containerized environment
+
+### Backend Setup (Manual)
 
 1. Navigate to the API directory:
 
@@ -213,6 +333,20 @@ npm run type-check       # TypeScript check
 
 ## 🧪 Testing
 
+Run all tests:
+
+```bash
+make test-all
+```
+
+Individual test suites:
+
+```bash
+make test-api      # Backend unit tests
+make test-client   # Frontend tests
+make test-e2e      # End-to-end tests
+```
+
 ### Backend Testing
 
 -   **Unit Tests**: Service and controller testing with Jest
@@ -225,7 +359,27 @@ npm run type-check       # TypeScript check
 -   **Unit Tests**: Utility and hook testing
 -   **Mocking**: Comprehensive mocking utilities
 
-## 🐳 Docker Development
+## 🔍 Code Quality
+
+```bash
+make lint-all      # Lint both projects
+make lint-api      # Lint backend only
+make lint-client   # Lint frontend only
+```
+
+## � Available Commands
+
+Run `make help` to see all available commands:
+
+-   **Setup & Control**: `setup`, `status`, `stop`, `restart-setup`
+-   **Development**: `dev-api`, `dev-client`, `dev-docker`
+-   **Building**: `build-api`, `build-client`, `build-all`
+-   **Testing**: `test-api`, `test-client`, `test-e2e`, `test-all`
+-   **Code Quality**: `lint-api`, `lint-client`, `lint-all`
+-   **Database**: `db-migrate`, `db-seed`, `db-connect`
+-   **Docker**: `docker-up`, `docker-down`, `docker-logs`
+
+## �🐳 Docker Development
 
 The backend includes a complete Docker development environment:
 
@@ -280,3 +434,7 @@ DB_NAME=chariot_takehome
 ## 📄 License
 
 This project is part of a coding challenge/takehome assignment.
+
+---
+
+**Need help?** Run `make help` to see all available commands.
