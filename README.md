@@ -352,6 +352,52 @@ make test-e2e      # End-to-end tests
 -   **Unit Tests**: Utility and hook testing
 -   **Mocking**: Comprehensive mocking utilities
 
+## 🧪 Testing
+
+This project includes a comprehensive test suite with **127 total tests** across frontend, backend, and end-to-end testing:
+
+### Test Coverage Summary
+
+| Test Type | Command | Tests | Status |
+|-----------|---------|-------|--------|
+| **Frontend Tests** | `make test-client` | 111 tests | ✅ React components, hooks, utilities |
+| **Backend Unit Tests** | `make test-api` | 9 tests | ✅ Services, controllers, business logic |
+| **End-to-End Tests** | `make test-e2e` | 7 tests | ✅ Full API integration with database |
+| **All Unit Tests** | `make test-all` | 120 tests | ✅ Frontend + Backend combined |
+
+### Quick Testing Commands
+
+```bash
+# Run individual test suites
+make test-client    # Frontend tests (React components, domain logic)
+make test-api       # Backend unit tests (services, controllers)
+make test-e2e       # End-to-end tests (full stack integration)
+
+# Run multiple test suites
+make test-all       # All unit tests (frontend + backend)
+```
+
+### Test Features
+
+-   **🎯 Domain Component Testing**: Comprehensive tests for RecipientSelector, DatePicker, and PaymentTable components
+-   **🔄 Integration Testing**: PaymentsList component with API mocking and state management
+-   **🏗️ Infrastructure Testing**: Mock data factories, React Query provider wrappers
+-   **🌐 End-to-End Testing**: Full API testing with Docker database integration
+-   **♿ Accessibility Testing**: ARIA roles, semantic HTML validation
+-   **⚡ Performance Testing**: Large dataset handling, re-render optimization
+
+### E2E Test Infrastructure
+
+The `make test-e2e` command automatically:
+
+1. **🐳 Starts Docker containers** (API + PostgreSQL)
+2. **⏳ Waits for services** to be ready
+3. **🗄️ Runs database migrations** 
+4. **🧪 Executes integration tests** against live API
+5. **📊 Validates API responses** and database state
+
+No manual setup required - just run `make test-e2e` and everything is handled automatically!
+
 ## 🔍 Code Quality
 
 ```bash
